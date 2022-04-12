@@ -50,8 +50,8 @@ params:
     ref:
       dist: norm
       loc: 1.0416
-      scale: 0.0004
-    proposal: 0.0002
+      scale: 0.008
+    proposal: 0.005
     latex: 100\theta_\mathrm{s}
     drop: true
   100*theta_s:
@@ -195,6 +195,8 @@ theory:
     use_renames: True
     extra_args:
       N_ncdm: 1
+      N_ur: 2.0328
+      # ------------------------------------------------------
       Omega_fld: 0.
       Omega_Lambda: 0.
       Omega_scf: -1.
@@ -202,5 +204,6 @@ theory:
       scf_tuning_index: 1
       scf_potential: lin
       scf_parameterisation: original
+      # ------------------------------------------------------
 
 output: ./projects/dark_rad/chains/EXAMPLE_EVALUATE3

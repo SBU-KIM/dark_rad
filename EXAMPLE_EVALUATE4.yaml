@@ -98,31 +98,61 @@ params:
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------
-  w0pwa:
-    prior:
-      min: -5 
-      max: -0.01
-    ref:
-      dist: norm
-      loc: -0.99
-      scale: 0.05
-    proposal: 0.05
-    latex: \log(10^{10} A_\mathrm{s})
+  # SCF DE params 
+  scf_c:
+    value: 1e-6
     drop: true
-  w:
-    prior:
-      min: -3
-      max: -0.01
-    ref:
-      dist: norm
-      loc: -0.99
-      scale: 0.05
-    proposal: 0.05
-    latex: w_{0,\mathrm{DE}}
-  wa:
-    value: 'lambda w0pwa, w: w0pwa - w'
+    latex: c_{\rm scf}
+  scf_parameters:
+    value: 'lambda scf_c: str(scf_c) + ",1., 0.0"'
     derived: false
-    latex: w_{a,\mathrm{DE}} 
+  scf_friction:
+    prior:
+      min: -1.
+      max: 1.
+    ref:
+       dist: norm
+       loc: 0.7
+       scale: 0.1
+    proposal: 0.05
+    drop: true
+    latex: \log_{10} \Upsilon_{\rm da}
+  scf_friction:
+    prior:
+      min: -1.
+      max: 1.
+    ref:
+       dist: norm
+       loc: 0.7
+       scale: 0.2
+    proposal: 0.01
+    drop: true
+    latex: \log_{10} \Upsilon_{\rm da}
+  scf_c_n_da:
+    derived: false
+    value: 'lambda scf_friction: 10**(scf_friction)'
+    latex: \Upsilon_{\rm da}
+  Omega0_scf_ke:
+    derived: true
+    latex: \Omega_{\rm scf,k}
+  Omega0_da_dr:
+    derived: true
+    latex: \Omega_{\rm dr}
+  w_scf_0:
+    derived: true
+    latex: w(z=0)
+  w_scf_p3:
+    derived: true
+    latex: w(z=0.3)
+  w_scf_p7:
+    derived: true
+    latex: w(z=0.7)
+  w_scf_1:
+    derived: true
+    latex: w(z=1)
+  w_scf_2:
+    derived: true
+    latex: w(z=2)
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------
@@ -165,11 +195,10 @@ sampler:
       As_1e9: 2.1
       n_s: 0.96605
       theta_s_1e2: 1.04088
+      scf_friction: 0.7
       omegabh2: 0.022383
       omegach2: 0.12011
       tau_reio: 0.0543
-      w0pwa: -0.968859
-      w: -0.909098
       A_planck: 1.00138
       calib_100T: 1.00136
       calib_217T: 0.997534
@@ -199,8 +228,16 @@ theory:
     use_renames: True
     extra_args:
       N_ncdm: 1
-      N_ur:   2.0328
+      N_ur: 2.0328
       # ------------------------------------------------------
-      Omega_Lambda: 0.0
+      Omega_fld: 0.
+      Omega_Lambda: 0.
+      Omega_scf: -1.
+      attractor_ic_scf: n
+      scf_tuning_index: 1
+      scf_potential: lin
+      scf_parameterisation: da_de
+      scf_n_da: 0
+      # ------------------------------------------------------
 
-output: ./projects/dark_rad/chains/EXAMPLE_EVALUATE1
+output: ./projects/dark_rad/chains/EXAMPLE_EVALUATE4
