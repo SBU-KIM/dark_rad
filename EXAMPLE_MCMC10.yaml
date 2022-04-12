@@ -1,5 +1,5 @@
 stop_at_error: false
-debug: true
+debug: False
 timing: True
 
 likelihood:
@@ -7,14 +7,44 @@ likelihood:
     path: ./external_modules/
   planck_2018_lowl.EE: 
     path: ./external_modules/
-  planck_2018_highl_plik.TTTEEE:
-    path: ./external_modules/
-    clik_file: plc_3.0/hi_l/plik/plik_rd12_HM_v22b_TTTEEE_35_1296.clik
+  mflike.MFLike:
+    input_file: data_sacc_00044.fits
+    cov_Bbl_file: data_sacc_w_covar_and_Bbl.fits
+    defaults:
+      # Which spectra?
+      polarizations: ['TT', 'TE', 'ET', 'EE']
+      # Scale cuts (in ell) for each spectrum
+      scales:
+        TT: [50, 1300]
+        TE: [50, 1300]
+        ET: [50, 1300]
+        EE: [50, 1300]
+      symmetrize: False
+    data:
+      experiments:
+        LAT:
+          frequencies: [93, 145, 225] 
+      spectra:
+        - experiments: ['LAT', 'LAT']
+          frequencies: [93, 93]
+          polarizations: ['TT','TE','EE']
+        - experiments: ['LAT', 'LAT']
+          frequencies: [93, 145]
+        - experiments: ['LAT', 'LAT']
+          frequencies: [93, 225]
+        - experiments: ['LAT', 'LAT']
+          frequencies: [145, 145]
+          polarizations: ['TT','TE','EE']
+        - experiments: ['LAT', 'LAT']
+          frequencies: [145, 225]
+        - experiments: ['LAT', 'LAT']
+          frequencies: [225, 225]
+          polarizations: ['TT','TE','EE']
   bao.sdss_dr12_consensus_bao: 
     path: ./external_modules/data/
   bao.sdss_dr7_mgs:
     path: ./external_modules/data/
-  sn.pantheon: 
+  sn.roman_o:
     path: ./external_modules/data/sn_data
 
 params:
@@ -98,31 +128,50 @@ params:
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------
-  w0pwa:
-    prior:
-      min: -5 
-      max: -0.01
-    ref:
-      dist: norm
-      loc: -0.99
-      scale: 0.05
-    proposal: 0.05
-    latex: \log(10^{10} A_\mathrm{s})
+  # SCF DE params 
+  scf_c:
+    value: 1e-6
     drop: true
-  w:
+    latex: c_{\rm scf}
+  scf_parameters:
+    value: 'lambda scf_c: str(scf_c) + ",1., 0.0"'
+    derived: false
+  scf_friction:
     prior:
-      min: -3
-      max: -0.01
+      min: 5.7
+      max: 8.7
     ref:
       dist: norm
-      loc: -0.99
-      scale: 0.05
-    proposal: 0.05
-    latex: w_{0,\mathrm{DE}}
-  wa:
-    value: 'lambda w0pwa, w: w0pwa - w'
+      loc: 6.7
+      scale: 0.5
+    proposal: 0.25
+    drop: true
+    latex: \log_{10} \Upsilon_{\rm da}
+  scf_c_n_da:
     derived: false
-    latex: w_{a,\mathrm{DE}} 
+    value: 'lambda scf_friction: 10**(scf_friction)'
+    latex: \Upsilon_{\rm da}
+  Omega0_scf_ke:
+    derived: true
+    latex: \Omega_{\rm scf,k}
+  Omega0_da_dr:
+    derived: true
+    latex: \Omega_{\rm dr}
+  w_scf_0:
+    derived: true
+    latex: w(z=0)
+  w_scf_p3:
+    derived: true
+    latex: w(z=0.3)
+  w_scf_p7:
+    derived: true
+    latex: w(z=0.7)
+  w_scf_1:
+    derived: true
+    latex: w(z=1)
+  w_scf_2:
+    derived: true
+    latex: w(z=2)
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------
@@ -210,6 +259,10 @@ sampler:
     # ---------------------------------------------------------------------
     Rminus1_single_split: 4
 
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+
 theory:
   classy:
     path: ./external_modules/code/class_de
@@ -217,8 +270,20 @@ theory:
     use_renames: True
     extra_args:
       N_ncdm: 1
-      N_ur:   2.0328
+      N_ur: 2.0328
       # ------------------------------------------------------
-      Omega_Lambda: 0.0
+      Omega_fld: 0.
+      Omega_Lambda: 0.
+      Omega_scf: -1.
+      attractor_ic_scf: n
+      scf_tuning_index: 1
+      scf_potential: lin
+      scf_parameterisation: da_de
+      scf_n_da: 3
+      # ------------------------------------------------------
 
-output: ./projects/dark_rad/chains/EXAMPLE_MCMC1
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
+
+output: ./projects/dark_rad/chains/EXAMPLE_MCMC10

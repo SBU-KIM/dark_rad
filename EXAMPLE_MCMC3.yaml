@@ -98,31 +98,28 @@ params:
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------
-  w0pwa:
+  scf_c:
     prior:
-      min: -5 
-      max: -0.01
-    ref:
-      dist: norm
-      loc: -0.99
-      scale: 0.05
-    proposal: 0.05
-    latex: \log(10^{10} A_\mathrm{s})
+      min: 5e-9
+      max: 2e-7
     drop: true
-  w:
-    prior:
-      min: -3
-      max: -0.01
-    ref:
-      dist: norm
-      loc: -0.99
-      scale: 0.05
-    proposal: 0.05
-    latex: w_{0,\mathrm{DE}}
-  wa:
-    value: 'lambda w0pwa, w: w0pwa - w'
+    latex: c_{\rm scf}
+  scf_parameters:
+    value: 'lambda scf_c: str(scf_c) + ",1., 0.0"'
     derived: false
-    latex: w_{a,\mathrm{DE}} 
+  Omega0_scf_ke:
+    derived: true
+    latex: \Omega_{\rm scf,k}
+  w_scf_0:
+    latex: w(z=0)
+  w_scf_p3:
+    latex: w(z=0.3)
+  w_scf_p7:
+    latex: w(z=0.7)
+  w_scf_1:
+    latex: w(z=1)
+  w_scf_2:
+    latex: w(z=2)
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------
@@ -217,8 +214,15 @@ theory:
     use_renames: True
     extra_args:
       N_ncdm: 1
-      N_ur:   2.0328
+      N_ur: 2.0328
       # ------------------------------------------------------
-      Omega_Lambda: 0.0
+      Omega_fld: 0.
+      Omega_Lambda: 0.
+      Omega_scf: -1.
+      attractor_ic_scf: n
+      scf_tuning_index: 1
+      scf_potential: lin
+      scf_parameterisation: original
+      # ------------------------------------------------------
 
-output: ./projects/dark_rad/chains/EXAMPLE_MCMC1
+output: ./projects/dark_rad/chains/EXAMPLE_MCMC3

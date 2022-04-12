@@ -100,7 +100,7 @@ params:
   # ----------------------------------------------------------------------------
   w0pwa:
     prior:
-      min: -5 
+      min: -1 
       max: -0.01
     ref:
       dist: norm
@@ -111,7 +111,7 @@ params:
     drop: true
   w:
     prior:
-      min: -3
+      min: -1 
       max: -0.01
     ref:
       dist: norm
@@ -221,4 +221,4 @@ theory:
       # ------------------------------------------------------
       Omega_Lambda: 0.0
 
-output: ./projects/dark_rad/chains/EXAMPLE_MCMC1
+output: ./projects/dark_rad/chains/EXAMPLE_MCMC2
