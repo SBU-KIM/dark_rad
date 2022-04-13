@@ -11,6 +11,12 @@
 #SBATCH --account=timeifler
 #SBATCH --time=120:00:00
 
+# Clear the environment from any previously loaded modules
+module purge > /dev/null 2>&1
+module load anaconda
+conda init bash
+source ~/.bashrc 
+
 echo Running on host `hostname`
 echo Time is `date`
 echo Directory is `pwd`
